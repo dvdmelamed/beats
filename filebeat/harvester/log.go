@@ -315,9 +315,15 @@ func (h *Harvester) close() {
 		logp.Debug("harvester", "Closing file: %s", h.state.Source)
 		harvesterOpenFiles.Add(-1)
 
+		// Mark the state as to be deleted
+		if h.config.DeleteOnClose {
+			h.state.ToBeDeleted = true
+		}
+
 		// On completion, push offset so we can continue where we left off if we relaunch on the same file
 		// Only send offset if file object was created successfully
 		h.sendStateUpdate()
+
 	} else {
 		logp.Warn("Stopping harvester, NOT closing file as file info not available: %s", h.state.Source)
 	}

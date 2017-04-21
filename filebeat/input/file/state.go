@@ -13,6 +13,7 @@ type State struct {
 	Source      string      `json:"source"`
 	Offset      int64       `json:"offset"`
 	Finished    bool        `json:"-"` // harvester state
+	ToBeDeleted bool        `json:"-"` // Used by harvester for deleting file
 	Fileinfo    os.FileInfo `json:"-"` // the file info
 	FileStateOS StateOS
 	Timestamp   time.Time     `json:"timestamp"`
@@ -25,6 +26,7 @@ func NewState(fileInfo os.FileInfo, path string) State {
 		Fileinfo:    fileInfo,
 		Source:      path,
 		Finished:    false,
+		ToBeDeleted: false,
 		FileStateOS: GetOSState(fileInfo),
 		Timestamp:   time.Now(),
 		TTL:         -1, // By default, state does have an infinite ttl
@@ -104,9 +106,13 @@ func (s *States) Cleanup() int {
 
 		expired := (state.TTL > 0 && currentTime.Sub(state.Timestamp) > state.TTL)
 
-		if state.TTL == 0 || expired {
+		if state.TTL == 0 || expired || state.ToBeDeleted {
 			if state.Finished {
-				logp.Debug("state", "State removed for %v because of older: %v", state.Source, state.TTL)
+				logp.Debug("state", "State removed for %v because of older(%v) or to be deleted (%v)", state.Source, state.TTL, state.ToBeDeleted)
+				if state.ToBeDeleted {
+					os.Remove(state.Source)
+					logp.Debug("state", "-- File deleted: %v", state.Source)
+				}
 				continue // drop state
 			} else {
 				logp.Err("State for %s should have been dropped, but couldn't as state is not finished.", state.Source)

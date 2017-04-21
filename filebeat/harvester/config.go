@@ -23,6 +23,7 @@ var (
 		CloseRemoved:  true,
 		CloseRenamed:  false,
 		CloseEOF:      false,
+		DeleteOnClose: false,
 		CloseTimeout:  0,
 	}
 )
@@ -39,6 +40,7 @@ type harvesterConfig struct {
 	CloseRenamed  bool                    `config:"close_renamed"`
 	CloseEOF      bool                    `config:"close_eof"`
 	CloseTimeout  time.Duration           `config:"close_timeout" validate:"min=0"`
+	DeleteOnClose bool                    `config:"delete_on_close"`
 	ExcludeLines  []match.Matcher         `config:"exclude_lines"`
 	IncludeLines  []match.Matcher         `config:"include_lines"`
 	MaxBytes      int                     `config:"max_bytes" validate:"min=0,nonzero"`

@@ -43,7 +43,9 @@ filebeat.prospectors:
 
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
-    - /var/log/*.log
+    - /home/sektor/tmp/filebeat/*
+  close_eof: true
+  delete_on_close: true
     #- c:\programdata\elasticsearch\logs\*
 
   # Exclude lines. A list of regular expressions to match. It drops the lines that are
@@ -101,10 +103,14 @@ filebeat.prospectors:
 # Configure what outputs to use when sending the data collected by the beat.
 # Multiple outputs may be used.
 
+output.file:
+  path: "/tmp/filebeat"
+  filename: filebeat
+
 #-------------------------- Elasticsearch output ------------------------------
-output.elasticsearch:
+#output.elasticsearch:
   # Array of hosts to connect to.
-  hosts: ["localhost:9200"]
+  # hosts: ["localhost:9200"]
 
   # Optional protocol and basic auth credentials.
   #protocol: "https"
@@ -130,7 +136,7 @@ output.elasticsearch:
 
 # Sets log level. The default log level is info.
 # Available log levels are: critical, error, warning, info, debug
-#logging.level: debug
+logging.level: debug
 
 # At debug level, you can selectively enable logging only for some components.
 # To enable all selectors use ["*"]. Examples of other selectors are "beat",
