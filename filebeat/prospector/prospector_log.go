@@ -90,7 +90,7 @@ func (l *Log) Run() {
 	// It is important that a first scan is run before cleanup to make sure all new states are read first
 	if l.config.CleanInactive > 0 || l.config.CleanRemoved {
 		beforeCount := l.Prospector.states.Count()
-		cleanedStates := l.Prospector.states.Cleanup()
+		cleanedStates := l.Prospector.states.Cleanup(true)
 		logp.Debug("prospector", "Prospector states cleaned up. Before: %d, After: %d", beforeCount, beforeCount-cleanedStates)
 	}
 

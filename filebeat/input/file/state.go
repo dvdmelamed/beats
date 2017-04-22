@@ -92,7 +92,7 @@ func (s *States) findPrevious(newState State) (int, State) {
 
 // Cleanup cleans up the state array. All states which are older then `older` are removed
 // The number of states that were cleaned up is returned
-func (s *States) Cleanup() int {
+func (s *States) Cleanup(with_delete bool) int {
 
 	s.Lock()
 	defer s.Unlock()
@@ -109,9 +109,9 @@ func (s *States) Cleanup() int {
 		if state.TTL == 0 || expired || state.ToBeDeleted {
 			if state.Finished {
 				logp.Debug("state", "State removed for %v because of older(%v) or to be deleted (%v)", state.Source, state.TTL, state.ToBeDeleted)
-				if state.ToBeDeleted {
-					os.Remove(state.Source)
-					logp.Debug("state", "-- File deleted: %v", state.Source)
+				if state.ToBeDeleted && with_delete {
+					err := os.Remove(state.Source)
+					logp.Debug("state", "-- File deleted: %v, Error: %v", state.Source, err)
 				}
 				continue // drop state
 			} else {

@@ -165,7 +165,7 @@ func (r *Registrar) Run() {
 		r.processEventStates(events)
 
 		beforeCount := r.states.Count()
-		cleanedStates := r.states.Cleanup()
+		cleanedStates := r.states.Cleanup(false)
 		statesCleanup.Add(int64(cleanedStates))
 
 		logp.Debug("registrar",
