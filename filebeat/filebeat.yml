@@ -46,6 +46,7 @@ filebeat.prospectors:
     - /home/sektor/tmp/filebeat/*
   close_eof: true
   delete_on_close: true
+  harvester_limit: 100
     #- c:\programdata\elasticsearch\logs\*
 
   # Exclude lines. A list of regular expressions to match. It drops the lines that are
@@ -97,7 +98,7 @@ filebeat.prospectors:
 # output.
 #fields:
 #  env: staging
-
+filebeat.shutdown_timeout: 1m
 #================================ Outputs =====================================
 
 # Configure what outputs to use when sending the data collected by the beat.
@@ -106,6 +107,8 @@ filebeat.prospectors:
 output.file:
   path: "/tmp/filebeat"
   filename: filebeat
+  rotate_every_kb: 100000
+  number_of_files: 100
 
 #-------------------------- Elasticsearch output ------------------------------
 #output.elasticsearch:
@@ -142,3 +145,8 @@ logging.level: debug
 # To enable all selectors use ["*"]. Examples of other selectors are "beat",
 # "publish", "service".
 #logging.selectors: ["*"]
+
+logging.files:
+  #rotateeverybytes: 10485760 # = 10MB
+  rotateeverybytes: 104857600 # = 100MB
+  keepfiles: 100
